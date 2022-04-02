@@ -5,17 +5,16 @@ import { Column } from 'primereact/column';
 import { FilterMatchMode } from 'primereact/api';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
-import { Dialog } from 'primereact/dialog';
 import Slider from "./components/Slider";
-import { getDirectorList, getCertificationList } from "./utility/getDataList";
+import { getUpdatedDataList, getDirectorList, getCertificationList } from "./utility/getDataList";
 import "./App.scss";
 import "primereact/resources/themes/lara-light-blue/theme.css";
-
 
 
 function App() {
   const [data, setData] = useState(null);
   const [first, setFirst] = useState(0);
+  const [displayModal, setDisplayModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [directors, setDirectors] = useState([])
   const [certifications, setCertifications] = useState([])
@@ -27,16 +26,12 @@ function App() {
     'certification': { value: null, matchMode: FilterMatchMode.EQUALS },
     'rating': { value: null, matchMode: FilterMatchMode.STARTS_WITH }
   });
-  //slider
-  const [displayModal, setDisplayModal] = useState(false);
 
   useEffect(() => {
     axios.get("https://skyit-coding-challenge.herokuapp.com/movies")
       .then((res) => {
-        let updatedData = res.data.map(movie => {
-          movie.rating = (movie.rating / 5 * 100).toFixed(2).toString() + "%";
-          return movie;
-        })
+        //convert data rating
+        let updatedData = getUpdatedDataList(res.data)
         setData(updatedData);
 
         //get certification
@@ -53,11 +48,10 @@ function App() {
   //certification dropdown
   const certificateFilter = (options) => {
     return <Dropdown value={options.value} options={certifications} itemTemplate={certificationOptionTemplate} showClear
-      onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select a certification" />;
+      onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select a status" />;
   }
 
   const certificationOptionTemplate = (option) => {
-    console.log(option);
     return <span className={`certification certification__${option.value.substring(0, 2).toLowerCase()}`}>{option.value}</span>;
   }
 
@@ -68,37 +62,28 @@ function App() {
   //director dropdown
   const directorFilter = (options) => {
     return <MultiSelect value={options.value} options={directors} itemTemplate={directorItemTemplate} showClear className="table__director"
-      onChange={(e) => options.filterApplyCallback(e.value)} optionLabel="name" optionValue="name" placeholder="Select a director" maxSelectedLabels={1} />
+      onChange={(e) => options.filterApplyCallback(e.value)} optionLabel="name" optionValue="name" placeholder="All" maxSelectedLabels={1} />
   }
 
   const directorItemTemplate = (option) => {
     return <span>{option.name}</span>
   }
 
-
   return (
     <div className="move">
       <h1 className="move__title">Favorite Movie List</h1>
-      <DataTable className="table" value={data}
-        paginator
-        rows={10}
+      <DataTable className="table" value={data} rows={10} responsiveLayout="scroll" emptyMessage="No data found."
         //paginator
-        first={first}
-        onPage={(e) => setFirst(e.first)}
-        currentPageReportTemplate=""
+        paginator first={first} onPage={(e) => setFirst(e.first)} currentPageReportTemplate=""
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         //dropdown box filter
-        filters={filters}
-        filterDisplay="row"
+        filters={filters} filterDisplay="row"
         // row selection
-        selection={selectedRow} onSelectionChange={e => { setSelectedRow(e.value); setDisplayModal(true) }}
+        selection={selectedRow} onSelectionChange={e => { setSelectedRow(e.value); setDisplayModal(true) }}>
 
-        responsiveLayout="scroll"
-        emptyMessage="No data found."
-      >
         <Column selectionMode="single"></Column>
         <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
-          field="title" header="Title" filter filterPlaceholder="Search by title" showFilterMenu={false} style={{ minWidth: '12rem' }}></Column>
+          field="title" header="Title" filter filterPlaceholder="Search by title" showFilterMenu={false} style={{ minWidth: '12rem' }}></Column >
         <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
           field="releaseDate" header="Year" filter filterPlaceholder="Search by year" showFilterMenu={false} style={{ minWidth: '12rem' }} ></Column>
         <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
@@ -109,7 +94,7 @@ function App() {
           field="certification" header="Certification" filter filterElement={certificateFilter} showFilterMenu={false} style={{ minWidth: '12rem' }} body={certificationItemTemplate} ></Column>
         <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
           field="rating" header="Rating" filter filterPlaceholder="Search by rating" showFilterMenu={false} style={{ minWidth: '12rem' }}></Column>
-      </DataTable>
+      </DataTable >
       {selectedRow && <Slider data={selectedRow} displayStatus={displayModal} displayFuc={setDisplayModal} />}
 
     </div >

@@ -27,3 +27,11 @@ export function getCertificationList(arr) {
     }
     return holder
 }
+
+export function getUpdatedDataList(arr) {
+    let updatedData = arr.map(movie => {
+        movie.rating = (movie.rating / 5 * 100).toFixed(2).toString() + "%";
+        return movie
+    })
+    return updatedData
+}

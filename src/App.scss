@@ -6,6 +6,7 @@
     padding: 1rem 4rem 4rem 4rem;
     margin: auto;
     text-align: center;
+    height: 100vh;
 
     &__title {
         margin: 1rem;
@@ -15,23 +16,29 @@
 }
 
 .table {
+    color: $dark-gray;
+
     &__text {
-        color: $dark-gray;
+        color: inherit;
     }
 
     &__header {
-        color: $dark-gray;
+        color: inherit;
     }
 
     &__filter {
         & input {
             border-radius: 2px;
         }
+        //remove default filter button
+        & .p-column-filter-clear-button {
+            display: none;
+        }
     }
 
     &__director {
         font-size: 0.9rem;
-        color: $dark-gray;
+        color: inherit;
         border-radius: 2px;
     }
 }

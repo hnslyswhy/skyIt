@@ -4,6 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { FilterMatchMode } from 'primereact/api';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 
 
 
@@ -12,6 +13,7 @@ function App() {
   const [data, setData] = useState(null);
   const [first, setFirst] = useState(0);
   const [selectedRow, setSelectedRow] = useState(null);
+  //let directors = [];
   const [filters, setFilters] = useState({
     'title': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     'releaseDate': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -21,16 +23,22 @@ function App() {
     'rating': { value: null, matchMode: FilterMatchMode.STARTS_WITH }
   });
 
+
   useEffect(() => {
     axios.get("https://skyit-coding-challenge.herokuapp.com/movies")
       .then((res) => {
-
         let updatedData = res.data.map(movie => {
+          console.log(movie.director)
           movie.rating = (movie.rating / 5 * 100).toFixed(2).toString() + "%";
           return movie;
         })
-        console.log(updatedData);
-        setData(updatedData)
+        setData(updatedData);
+        // get all directors
+        /*         updatedData.forEach(movie => {
+                  if (!directors.includes(movie.director)) {
+                    directors.push(movie.director);
+                  }
+                }); */
       })
       .catch(e => console.log(e))
   }, [])
@@ -39,13 +47,28 @@ function App() {
   const certifications = [{ label: 'General', value: "General" }, { label: 'CA-PG', value: "CA-PG" }, { label: '14 Accompaniment', value: "14 Accompaniment" }];
 
   const certificateFilter = (options) => {
-    return <Dropdown style={{ width: '100%' }} className="ui-column-filter" value={options.value} options={certifications}
-      onChange={
-        (e) => {
-          options.filterApplyCallback(e.value)
-        }
-      } placeholder="Select a certification" showClear />;
+    return <Dropdown value={options.value} options={certifications}
+      onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select a certification" showClear />;
   }
+
+  //director dropdown
+  let directors = [{ name: " John Carney" }, { name: "Patty Jenkins" }, { name: "Travis Fine" }, { name: "Amy Poehler" }, { name: "David Ayer" },
+  { name: "Zack Snyder" }, { name: "Pete Docter" }, { name: "Ryan Coogler" }, { name: "Luc Besson" }]
+
+  const directorFilter = (options) => {
+    return <MultiSelect value={options.value} options={directors} itemTemplate={directorItemTemplate}
+      onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select a director" maxSelectedLabels={10} />;
+  }
+
+  const directorItemTemplate = (option) => {
+    return (
+      <div >
+        <span >{option.name}</span>
+      </div>
+    );
+  }
+
+
 
 
 
@@ -75,7 +98,7 @@ function App() {
           <Column field="title" header="Title" filter filterPlaceholder="Search by title" showFilterMenu={false} ></Column>
           <Column field="releaseDate" header="Year" filter filterPlaceholder="Search by year" showFilterMenu={false} ></Column>
           <Column field="length" header="Running time" filter filterPlaceholder="Search by time" showFilterMenu={false} ></Column>
-          <Column field="director" header="Director"></Column>
+          <Column field="director" header="Director" filter filterElement={directorFilter} showFilterMenu={false}></Column>
           <Column field="certification" header="Certification" filter filterElement={certificateFilter} showFilterMenu={false} ></Column>
           <Column field="rating" header="Rating" filter filterPlaceholder="Search by rating" showFilterMenu={false} ></Column>
         </DataTable>

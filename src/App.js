@@ -5,7 +5,7 @@ import { Column } from 'primereact/column';
 import { FilterMatchMode } from 'primereact/api';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
-
+import { Dialog } from 'primereact/dialog';
 
 
 
@@ -18,11 +18,12 @@ function App() {
     'title': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     'releaseDate': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     'length': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'director': { value: null, matchMode: FilterMatchMode.EQUALS },
+    'director': { value: null, matchMode: FilterMatchMode.IN },
     'certification': { value: null, matchMode: FilterMatchMode.EQUALS },
     'rating': { value: null, matchMode: FilterMatchMode.STARTS_WITH }
   });
-
+  //slider
+  const [displayModal, setDisplayModal] = useState(false);
 
   useEffect(() => {
     axios.get("https://skyit-coding-challenge.herokuapp.com/movies")
@@ -34,11 +35,14 @@ function App() {
         })
         setData(updatedData);
         // get all directors
-        /*         updatedData.forEach(movie => {
-                  if (!directors.includes(movie.director)) {
-                    directors.push(movie.director);
-                  }
-                }); */
+        let directorLabels = updatedData.map(movie => {
+          if (!directors.includes({ label: movie.director })) {
+            return {
+              label: movie.director
+            }
+          }
+        });
+        console.log(directorLabels);
       })
       .catch(e => console.log(e))
   }, [])
@@ -52,12 +56,12 @@ function App() {
   }
 
   //director dropdown
-  let directors = [{ name: " John Carney" }, { name: "Patty Jenkins" }, { name: "Travis Fine" }, { name: "Amy Poehler" }, { name: "David Ayer" },
+  let directors = [{ name: "John Carney" }, { name: "Patty Jenkins" }, { name: "Travis Fine" }, { name: "Amy Poehler" }, { name: "David Ayer" },
   { name: "Zack Snyder" }, { name: "Pete Docter" }, { name: "Ryan Coogler" }, { name: "Luc Besson" }]
 
   const directorFilter = (options) => {
-    return <MultiSelect value={options.value} options={directors} itemTemplate={directorItemTemplate}
-      onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select a director" maxSelectedLabels={10} />;
+    return <MultiSelect value={options.value} options={directors} itemTemplate={directorItemTemplate} showClear
+      onChange={(e) => options.filterApplyCallback(e.value)} optionLabel="name" optionValue="name" placeholder="Select a director" maxSelectedLabels={1} />;
   }
 
   const directorItemTemplate = (option) => {
@@ -86,8 +90,11 @@ function App() {
           filters={filters}
           filterDisplay="row"
           // row selection
-          selectionMode="single"
-          selection={selectedRow} onSelectionChange={e => setSelectedRow(e.value)}
+          selection={selectedRow} onSelectionChange={e => {
+            console.log(e.value)
+            setSelectedRow(e.value);
+            setDisplayModal(true)
+          }}
 
           responsiveLayout="scroll"
           paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
@@ -95,6 +102,8 @@ function App() {
           emptyMessage="No data found."
           currentPageReportTemplate=""
         >
+          <Column
+            selectionMode="single"></Column>
           <Column field="title" header="Title" filter filterPlaceholder="Search by title" showFilterMenu={false} ></Column>
           <Column field="releaseDate" header="Year" filter filterPlaceholder="Search by year" showFilterMenu={false} ></Column>
           <Column field="length" header="Running time" filter filterPlaceholder="Search by time" showFilterMenu={false} ></Column>
@@ -102,6 +111,25 @@ function App() {
           <Column field="certification" header="Certification" filter filterElement={certificateFilter} showFilterMenu={false} ></Column>
           <Column field="rating" header="Rating" filter filterPlaceholder="Search by rating" showFilterMenu={false} ></Column>
         </DataTable>
+        <Dialog
+          header="MOVIE DETAILS"
+          footer="All movie data are from Wikipedia and IMDb"
+          modal
+          visible={displayModal}
+          style={{ width: '30vw' }}
+          onHide={() => setDisplayModal(false)}
+          position="right">
+          {selectedRow && <article>
+            <h2>{selectedRow.title}</h2>
+            <p>Directed by {selectedRow.director}</p>
+            <p>Cast: {selectedRow.cast.map((person, index) => <span key={index}>{person}</span>)}</p>
+            <p>Genre: {selectedRow.genre.map((genre, index) => <span key={index}>{genre}</span>)}</p>
+            <div>
+              <p>Plot:</p>
+              <p>{selectedRow && selectedRow.plot}</p>
+            </div>
+          </article >}
+        </Dialog >
       </section>
 
     </div>

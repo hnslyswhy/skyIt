@@ -2,11 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { FilterMatchMode } from 'primereact/api';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
-import Slider from "./components/Slider";
+import Slider from "./components/Slider/Slider";
 import { getUpdatedDataList, getDirectorList, getCertificationList } from "./utility/getDataList";
+import { filterSetting, certificationOptionTemplate, certificationItemTemplate, directorItemTemplate } from "./utility/dropdown";
 import "./App.scss";
 import "primereact/resources/themes/lara-light-blue/theme.css";
 
@@ -18,14 +18,7 @@ function App() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [directors, setDirectors] = useState([])
   const [certifications, setCertifications] = useState([])
-  const [filters, setFilters] = useState({
-    'title': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'releaseDate': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'length': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    'director': { value: null, matchMode: FilterMatchMode.IN },
-    'certification': { value: null, matchMode: FilterMatchMode.EQUALS },
-    'rating': { value: null, matchMode: FilterMatchMode.STARTS_WITH }
-  });
+  const [filters, setFilters] = useState(filterSetting);
 
   useEffect(() => {
     axios.get("https://skyit-coding-challenge.herokuapp.com/movies")
@@ -51,22 +44,10 @@ function App() {
       onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select a status" />;
   }
 
-  const certificationOptionTemplate = (option) => {
-    return <span className={`certification certification__${option.value.substring(0, 2).toLowerCase()}`}>{option.value}</span>;
-  }
-
-  const certificationItemTemplate = (option) => {
-    return <span className={`certification certification__${option.certification.substring(0, 2).toLowerCase()}`}>{option.certification}</span>;
-  }
-
   //director dropdown
   const directorFilter = (options) => {
     return <MultiSelect value={options.value} options={directors} itemTemplate={directorItemTemplate} showClear className="table__director"
       onChange={(e) => options.filterApplyCallback(e.value)} optionLabel="name" optionValue="name" placeholder="All" maxSelectedLabels={1} />
-  }
-
-  const directorItemTemplate = (option) => {
-    return <span>{option.name}</span>
   }
 
   return (

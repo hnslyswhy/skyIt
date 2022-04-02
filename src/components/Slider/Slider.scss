@@ -1,5 +1,5 @@
-@use "../styles/partials/variable" as *;
-@use "../styles/partials/global";
+@use "../../styles/partials/variable" as *;
+@use "../../styles/partials/global";
 
 .intro {
     background-color: $dark-green;

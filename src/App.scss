@@ -18,11 +18,8 @@
 .table {
     color: $dark-gray;
 
-    &__text {
-        color: inherit;
-    }
-
-    &__header {
+    &__text,
+    header {
         color: inherit;
     }
 

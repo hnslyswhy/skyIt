@@ -8,7 +8,6 @@ import Slider from "./components/Slider/Slider";
 import { getUpdatedDataList, getDirectorList, getCertificationList } from "./utility/getDataList";
 import { filterSetting, certificationOptionTemplate, certificationItemTemplate, directorItemTemplate } from "./utility/dropdown";
 import "./App.scss";
-import "primereact/resources/themes/lara-light-blue/theme.css";
 
 
 function App() {

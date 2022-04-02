@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog } from 'primereact/dialog';
 import "./Slider.scss"
 
 
 const Slider = ({ data, displayStatus, displayFuc }) => {
-    const handleOnHide = () => {
-        displayFuc(false)
-    }
+    const handleOnHide = () => { displayFuc(false) }
 
     const header = <h1 className='intro__header'>movie details</h1>
-
     const footer = <p className='intro__footer'>All movie data are from Wikipedia and IMDb</p>
 
     return (
@@ -18,7 +15,7 @@ const Slider = ({ data, displayStatus, displayFuc }) => {
             footer={footer}
             modal
             visible={displayStatus}
-            style={{ width: '30vw' }}
+            style={{ width: '35vw' }}
             onHide={handleOnHide}
             position="right">
             <article className='intro'>

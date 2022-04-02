@@ -28,6 +28,12 @@
             border-radius: 2px;
         }
     }
+
+    &__director {
+        font-size: 0.9rem;
+        color: $dark-gray;
+        border-radius: 2px;
+    }
 }
 
 .certification {
@@ -40,16 +46,16 @@
 
     &__ge {
         background-color: $light-green;
-        color: $dark-green;
+        color: green;
     }
 
     &__ca {
-        background-color: $light-pink;
-        color: red;
+        background-color: $light-yellow;
+        color: rgb(250, 192, 2);
     }
 
     &__14 {
-        background-color: $light-yellow;
-        color: rgb(250, 192, 2);
+        background-color: $light-pink;
+        color: red;
     }
 }

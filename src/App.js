@@ -67,7 +67,7 @@ function App() {
 
   //director dropdown
   const directorFilter = (options) => {
-    return <MultiSelect value={options.value} options={directors} itemTemplate={directorItemTemplate} showClear
+    return <MultiSelect value={options.value} options={directors} itemTemplate={directorItemTemplate} showClear className="table__director"
       onChange={(e) => options.filterApplyCallback(e.value)} optionLabel="name" optionValue="name" placeholder="Select a director" maxSelectedLabels={1} />
   }
 

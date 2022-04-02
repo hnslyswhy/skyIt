@@ -1,2 +1,46 @@
 @use "./styles/partials/mixin" as *;
 @use "./styles/partials/variable" as *;
+@use "./styles/partials/global";
+
+.move {
+    background-color: $light-gray;
+    padding: 1rem 4rem 4rem 4rem;
+    margin: auto;
+    text-align: center;
+
+    &__title {
+        margin: 1rem;
+        font-family: "Lora";
+        font-weight: 300;
+    }
+}
+
+.table {
+    &__text {
+        color: $dark-gray;
+    }
+}
+
+.certification {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+
+    &__ge {
+        background-color: $light-green;
+        color: green;
+    }
+
+    &__ca {
+        background-color: $light-pink;
+        color: red;
+    }
+
+    &__14 {
+        background-color: $light-yellow;
+        color: rgb(250, 192, 2);
+    }
+}

@@ -10,3 +10,10 @@ body {
     font-family: "Libre Baskerville", serif;
     color: $dark-gray;
 }
+
+input {
+    border-radius: 2px;
+    &::placeholder {
+        font-size: 0.9rem;
+    }
+}

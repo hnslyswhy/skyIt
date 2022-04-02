@@ -6,8 +6,10 @@ import { FilterMatchMode } from 'primereact/api';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { Dialog } from 'primereact/dialog';
+import Slider from "./components/Slider";
 import { getDirectorList, getCertificationList } from "./utility/getDataList";
 import "./App.scss";
+import "primereact/resources/themes/lara-light-blue/theme.css";
 
 
 
@@ -50,12 +52,17 @@ function App() {
 
   //certification dropdown
   const certificateFilter = (options) => {
-    return <Dropdown value={options.value} options={certifications} itemTemplate={certificationItemTemplate} showClear
+    return <Dropdown value={options.value} options={certifications} itemTemplate={certificationOptionTemplate} showClear
       onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select a certification" />;
   }
 
+  const certificationOptionTemplate = (option) => {
+    console.log(option);
+    return <span className={`certification certification__${option.value.substring(0, 2).toLowerCase()}`}>{option.value}</span>;
+  }
+
   const certificationItemTemplate = (option) => {
-    return <span className={`classification classification__${option.value}`}>{option.value}</span>;
+    return <span className={`certification certification__${option.certification.substring(0, 2).toLowerCase()}`}>{option.certification}</span>;
   }
 
   //director dropdown
@@ -64,13 +71,14 @@ function App() {
       onChange={(e) => options.filterApplyCallback(e.value)} optionLabel="name" optionValue="name" placeholder="Select a director" maxSelectedLabels={1} />
   }
 
-  const directorItemTemplate = (option) => { return <span >{option.name}</span> }
+  const directorItemTemplate = (option) => {
+    return <span>{option.name}</span>
+  }
 
 
   return (
     <div className="move">
       <h1 className="move__title">Favorite Movie List</h1>
-
       <DataTable className="table" value={data}
         paginator
         rows={10}
@@ -88,37 +96,23 @@ function App() {
         responsiveLayout="scroll"
         emptyMessage="No data found."
       >
-        <Column
-          selectionMode="single"></Column>
-        <Column field="title" header="Title" filter filterPlaceholder="Search by title" showFilterMenu={false} style={{ minWidth: '12rem' }} className="table__text" ></Column>
-        <Column field="releaseDate" header="Year" filter filterPlaceholder="Search by year" showFilterMenu={false} style={{ minWidth: '12rem' }} className="table__text"></Column>
-        <Column field="length" header="Running time" filter filterPlaceholder="Search by time" showFilterMenu={false} style={{ minWidth: '12rem' }} className="table__text"></Column>
-        <Column field="director" header="Director" filter filterElement={directorFilter} showFilterMenu={false} style={{ minWidth: '12rem' }} className="table__text"></Column>
-        <Column field="certification" header="Certification" filter filterElement={certificateFilter} showFilterMenu={false} style={{ minWidth: '12rem' }} ></Column>
-        <Column field="rating" header="Rating" filter filterPlaceholder="Search by rating" showFilterMenu={false} style={{ minWidth: '12rem' }} className="table__text"></Column>
+        <Column selectionMode="single"></Column>
+        <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
+          field="title" header="Title" filter filterPlaceholder="Search by title" showFilterMenu={false} style={{ minWidth: '12rem' }}></Column>
+        <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
+          field="releaseDate" header="Year" filter filterPlaceholder="Search by year" showFilterMenu={false} style={{ minWidth: '12rem' }} ></Column>
+        <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
+          field="length" header="Running time" filter filterPlaceholder="Search by time" showFilterMenu={false} style={{ minWidth: '12rem' }} ></Column>
+        <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
+          field="director" header="Director" filter filterElement={directorFilter} showFilterMenu={false} style={{ minWidth: '12rem' }} ></Column>
+        <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
+          field="certification" header="Certification" filter filterElement={certificateFilter} showFilterMenu={false} style={{ minWidth: '12rem' }} body={certificationItemTemplate} ></Column>
+        <Column headerClassName="table__header " filterHeaderClassName="table__filter" bodyClassName="table__body" className="table__text"
+          field="rating" header="Rating" filter filterPlaceholder="Search by rating" showFilterMenu={false} style={{ minWidth: '12rem' }}></Column>
       </DataTable>
+      {selectedRow && <Slider data={selectedRow} displayStatus={displayModal} displayFuc={setDisplayModal} />}
 
-      <Dialog
-        header="MOVIE DETAILS"
-        footer="All movie data are from Wikipedia and IMDb"
-        modal
-        visible={displayModal}
-        style={{ width: '30vw' }}
-        onHide={() => setDisplayModal(false)}
-        position="right">
-        {selectedRow && <article>
-          <h2>{selectedRow.title}</h2>
-          <p>Directed by {selectedRow.director}</p>
-          <p>Cast: {selectedRow.cast.map((person, index) => <span key={index}>{person}</span>)}</p>
-          <p>Genre: {selectedRow.genre.map((genre, index) => <span key={index}>{genre}</span>)}</p>
-          <div>
-            <p>Plot:</p>
-            <p>{selectedRow && selectedRow.plot}</p>
-          </div>
-        </article >}
-      </Dialog >
-
-    </div>
+    </div >
   );
 }
 
